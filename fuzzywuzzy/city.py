@@ -1,13 +1,37 @@
 import pandas as pd
 import numpy as np 
 
+
+# method 1
+import geonamescache
+
+gc = geonamescache.GeonamesCache()
+
+# gets nested dictionary for countries
+countries = gc.get_countries()
+
+# gets nested dictionary for cities
+cities = gc.get_cities()
+
 import spacy 
 #import en_core_web_sm
 nlp = spacy.load("en_core_web_sm")
 
-cities = pd.read_csv('us_cities_states_counties.csv') 
-cities['City alias'] = cities['City alias'].apply(lambda x: str(x))
-print(cities['City alias'] )
+# cities = pd.read_csv('us_cities_states_counties.csv') 
+# cities['City alias'] = cities['City alias'].apply(lambda x: str(x))
+# print(cities['City alias'] )
+doc = nlp('Baltimore, Boulder, Washington, CO, CA, HI, Bangor')
+
+
+
+for ent in doc.ents:
+    if ent.label_ == 'GPE':
+        if ent.text in countries:
+            print(f"Country : {ent.text}")
+        elif ent.text in cities:
+            print(f"City : {ent.text}")
+        else:
+            print(f"Other GPE : {ent.text}")
 
 # GPE = Countries, cities, states.
 """count = 0
